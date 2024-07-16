@@ -29,6 +29,21 @@ public class PaymentServiceImpl implements PaymentService {
         }
 
         BigDecimal price = product.getPrice();
+        BigDecimal discount = getDiscount(couponCode, price);
+
+        if (discount.compareTo(price) >= 0) {
+            return BigDecimal.ZERO;
+        }
+
+        price = price.subtract(discount);
+        BigDecimal tax = getTax(taxNumber, price);
+        price = price.add(tax).setScale(2, RoundingMode.CEILING);
+
+        return price;
+    }
+
+    private BigDecimal getDiscount(String couponCode, BigDecimal price) throws Exception {
+
         BigDecimal discount = BigDecimal.ZERO;
 
         if (couponCode != null && !couponCode.isEmpty()) {
@@ -40,18 +55,12 @@ public class PaymentServiceImpl implements PaymentService {
                 } else {
                     discount = coupon.getDiscount();
                 }
+            } else {
+                throw new Exception("Coupon has expired");
             }
         }
 
-        if (discount.compareTo(price) >= 0) {
-            return BigDecimal.ZERO;
-        }
-
-        price = price.subtract(discount);
-        BigDecimal tax = getTax(taxNumber, price);
-        price = price.add(tax).setScale(2, RoundingMode.CEILING);
-
-        return price;
+        return discount;
     }
 
     private BigDecimal getTax(String taxNumber, BigDecimal price) throws Exception {

@@ -56,6 +56,20 @@ public class PaymentServiceTest {
     }
 
     @Test
+    public void testCalculatePriceExpiredCoupon() throws Exception {
+        Product product = new Product(1L, "iphone", BigDecimal.valueOf(100), true);
+        Coupon coupon = new Coupon(1L, "P10", BigDecimal.valueOf(10), true, false);
+
+        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+        when(couponRepository.findByCode("P10")).thenReturn(Optional.of(coupon));
+
+        Exception exception = assertThrows(Exception.class, () -> {
+            paymentService.calculatePrice(1L, "DE123456789", "P10");
+        });
+        assertEquals("Coupon has expired", exception.getMessage());
+    }
+
+    @Test
     public void testCalculatePriceWithPercentageCoupon() throws Exception {
         Product product = new Product(1L, "iphone", BigDecimal.valueOf(100), true);
         Coupon coupon = new Coupon(1L, "P10", BigDecimal.valueOf(10), true, true);
