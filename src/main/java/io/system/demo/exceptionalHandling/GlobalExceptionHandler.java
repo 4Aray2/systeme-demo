@@ -24,15 +24,6 @@ public class GlobalExceptionHandler {
     }
 
     @ResponseBody
-    @ExceptionHandler(ProductNotFoundException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ProductNotFoundErrorResponse handleProductNotFoundException(
-            ProductNotFoundException e
-    ) {
-        return new ProductNotFoundErrorResponse(e.getId());
-    }
-
-    @ResponseBody
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ValidationErrorResponse onConstraintValidationException(

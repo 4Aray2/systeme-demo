@@ -2,7 +2,6 @@ package io.system.demo.service;
 
 import io.system.demo.entity.Coupon;
 import io.system.demo.entity.Product;
-import io.system.demo.exceptionalHandling.ProductNotFoundException;
 import io.system.demo.payment.PaypalPaymentProcessor;
 import io.system.demo.payment.StripePaymentProcessor;
 import io.system.demo.repo.CouponRepository;
@@ -11,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 
 @Service
 public class PaymentServiceImpl implements PaymentService {
@@ -23,7 +21,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     public BigDecimal calculatePrice(Long productId, String taxNumber, String couponCode) throws Exception {
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new ProductNotFoundException("Product not found", productId));
+                .orElseThrow(() -> new Exception("Product not found"));
 
         BigDecimal price = product.getPrice();
         BigDecimal discount = BigDecimal.ZERO;
@@ -41,10 +39,10 @@ public class PaymentServiceImpl implements PaymentService {
         }
 
         if (discount.compareTo(price) >= 0) {
-            price = BigDecimal.ZERO;
-        } else {
-            price = price.subtract(discount);
+            return BigDecimal.ZERO;
         }
+
+        price = price.subtract(discount);
         BigDecimal tax = getTax(taxNumber, price);
 
         return price.add(tax);
