@@ -30,10 +30,12 @@ public class PaymentServiceImpl implements PaymentService {
         if (couponCode != null && !couponCode.isEmpty()) {
             Coupon coupon = couponRepository.findByCode(couponCode)
                     .orElseThrow(() -> new Exception("Coupon not found"));
-            if (coupon.isPercentage()) {
-                discount = price.multiply(coupon.getDiscount().divide(BigDecimal.valueOf(100)));
-            } else {
-                discount = coupon.getDiscount();
+            if (coupon.isActive()) {
+                if (coupon.isPercentage()) {
+                    discount = price.multiply(coupon.getDiscount().divide(BigDecimal.valueOf(100)));
+                } else {
+                    discount = coupon.getDiscount();
+                }
             }
         }
 
