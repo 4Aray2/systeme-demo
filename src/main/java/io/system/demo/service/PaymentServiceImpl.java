@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 @Service
 public class PaymentServiceImpl implements PaymentService {
@@ -39,7 +40,11 @@ public class PaymentServiceImpl implements PaymentService {
             }
         }
 
-        price = price.subtract(discount);
+        if (discount.compareTo(price) >= 0) {
+            price = BigDecimal.ZERO;
+        } else {
+            price = price.subtract(discount);
+        }
         BigDecimal tax = getTax(taxNumber, price);
 
         return price.add(tax);
