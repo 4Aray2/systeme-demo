@@ -32,7 +32,7 @@ public class PaymentServiceImpl implements PaymentService {
         BigDecimal discount = getDiscount(couponCode, price);
 
         if (discount.compareTo(price) >= 0) {
-            return BigDecimal.ZERO;
+            return BigDecimal.ZERO.setScale(2);
         }
 
         price = price.subtract(discount);

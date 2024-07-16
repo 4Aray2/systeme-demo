@@ -94,6 +94,18 @@ public class PaymentServiceTest {
     }
 
     @Test
+    public void testCalculatePriceWithFixedCouponExceedsPrice() throws Exception {
+        Product product = new Product(3L, "case", BigDecimal.valueOf(10), true);
+        Coupon coupon = new Coupon(1L, "F20", BigDecimal.valueOf(20), false, true);
+
+        when(productRepository.findById(3L)).thenReturn(Optional.of(product));
+        when(couponRepository.findByCode("F20")).thenReturn(Optional.of(coupon));
+
+        BigDecimal price = paymentService.calculatePrice(3L, "DE123456789", "F20");
+        assertEquals(BigDecimal.valueOf(0).setScale(2, RoundingMode.CEILING), price);
+    }
+
+    @Test
     public void testMakePaymentWithPaypal() throws Exception {
         paymentService.makePayment(BigDecimal.valueOf(100000), "paypal");
     }
