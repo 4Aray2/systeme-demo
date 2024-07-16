@@ -36,8 +36,19 @@ public class PaymentServiceTest {
     }
 
     @Test
+    public void testCalculatePriceOutOfStock() throws Exception {
+        Product product = new Product(1L, "iphone", BigDecimal.valueOf(100), false);
+        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+
+        Exception exception = assertThrows(Exception.class, () -> {
+            paymentService.calculatePrice(1L, "DE123456789", null);
+        });
+        assertEquals("Product out of stock", exception.getMessage());
+    }
+
+    @Test
     public void testCalculatePriceWithoutCoupon() throws Exception {
-        Product product = new Product(1L, "iphone", BigDecimal.valueOf(100));
+        Product product = new Product(1L, "iphone", BigDecimal.valueOf(100), true);
         when(productRepository.findById(1L)).thenReturn(Optional.of(product));
 
         BigDecimal price = paymentService.calculatePrice(1L, "DE123456789", null);
@@ -46,7 +57,7 @@ public class PaymentServiceTest {
 
     @Test
     public void testCalculatePriceWithPercentageCoupon() throws Exception {
-        Product product = new Product(1L, "iphone", BigDecimal.valueOf(100));
+        Product product = new Product(1L, "iphone", BigDecimal.valueOf(100), true);
         Coupon coupon = new Coupon(1L, "P10", BigDecimal.valueOf(10), true, true);
 
         when(productRepository.findById(1L)).thenReturn(Optional.of(product));
@@ -58,7 +69,7 @@ public class PaymentServiceTest {
 
     @Test
     public void testCalculatePriceWithFixedCoupon() throws Exception {
-        Product product = new Product(1L, "iphone", BigDecimal.valueOf(100));
+        Product product = new Product(1L, "iphone", BigDecimal.valueOf(100), true);
         Coupon coupon = new Coupon(1L, "F15", BigDecimal.valueOf(15), false, true);
 
         when(productRepository.findById(1L)).thenReturn(Optional.of(product));

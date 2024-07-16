@@ -19,12 +19,16 @@ public class Product {
     @Column(name = "price")
     private BigDecimal price;
 
+    @Column(name = "is_in_stock")
+    private boolean isInStock;
+
     public Product() {}
 
-    public Product(Long id, String name, BigDecimal price) {
+    public Product(Long id, String name, BigDecimal price, boolean isInStock) {
         this.id = id;
         this.name = name;
         this.price = price;
+        this.isInStock = isInStock;
     }
 
     public Long getId() {
@@ -51,12 +55,21 @@ public class Product {
         this.price = price;
     }
 
+    public boolean isInStock() {
+        return isInStock;
+    }
+
+    public void setInStock(boolean inStock) {
+        isInStock = inStock;
+    }
+
     @Override
     public String toString() {
         return "Product{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", price=" + price +
+                ", isInStock=" + isInStock +
                 '}';
     }
 }

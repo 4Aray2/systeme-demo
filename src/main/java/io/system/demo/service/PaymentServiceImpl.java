@@ -24,6 +24,10 @@ public class PaymentServiceImpl implements PaymentService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new Exception("Product not found"));
 
+        if (!product.isInStock()) {
+            throw new Exception("Product out of stock");
+        }
+
         BigDecimal price = product.getPrice();
         BigDecimal discount = BigDecimal.ZERO;
 
