@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 @Service
 public class PaymentServiceImpl implements PaymentService {
@@ -44,8 +45,9 @@ public class PaymentServiceImpl implements PaymentService {
 
         price = price.subtract(discount);
         BigDecimal tax = getTax(taxNumber, price);
+        price = price.add(tax).setScale(2, RoundingMode.CEILING);
 
-        return price.add(tax);
+        return price;
     }
 
     private BigDecimal getTax(String taxNumber, BigDecimal price) throws Exception {
